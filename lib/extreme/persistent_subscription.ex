@@ -37,7 +37,7 @@ defmodule Extreme.PersistentSubscription do
   `Extreme.Messages.CreatePersistentSubscription` message via
   `c:Extreme.execute/3`, by the HTTP API, or in the EventStore dashboard.
 
-  ## Example
+  ## Examples
 
   ```elixir
   defmodule MyPersistentListener do
@@ -146,7 +146,7 @@ defmodule Extreme.PersistentSubscription do
 
   `correlation_id` comes from the `:on_event` cast.
 
-  ## Example
+  ## Examples
 
       def handle_cast({:on_event, event, correlation_id}, state) do
         # .. do some processing ..
@@ -188,7 +188,7 @@ defmodule Extreme.PersistentSubscription do
   `:max_retry_count` field in `Extreme.Messages.CreatePersistentSubscription`,
   the event is parked.
 
-  ## Example
+  ## Examples
 
       def handle_cast({:on_event, event, correlation_id}, state) do
         # .. do some processing ..
