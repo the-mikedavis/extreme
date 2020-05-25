@@ -13,6 +13,7 @@ defmodule Extreme.RequestManager do
   ]
 
   defmodule State do
+    @moduledoc false
     defstruct ~w(base_name credentials requests subscriptions read_only)a
   end
 

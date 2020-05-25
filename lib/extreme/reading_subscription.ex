@@ -6,6 +6,7 @@ defmodule Extreme.ReadingSubscription do
   alias Extreme.SharedSubscription, as: Shared
 
   defmodule State do
+    @moduledoc false
     defstruct ~w(base_name correlation_id subscriber read_params buffered_messages read_until status)a
   end
 

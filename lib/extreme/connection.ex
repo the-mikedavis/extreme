@@ -5,6 +5,7 @@ defmodule Extreme.Connection do
   require Logger
 
   defmodule State do
+    @moduledoc false
     defstruct ~w(base_name socket received_data)a
   end
 
