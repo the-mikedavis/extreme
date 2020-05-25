@@ -1,18 +1,22 @@
 defmodule Extreme.FanoutListener do
   @moduledoc ~S"""
-  Module that uses this listener will connect to stream of event store and wait for new events.
-  In the contrast of Extreme.Listener which will first read existing events (starting from position x) and then
-  keep listening new events.
+  A macro for writing listeners which subscribe only to new events
 
-  This is similar behavior as RabbitMQs fanout exchenge, hence the name.
+  Modules that use this listener will connect to a stream and wait for new
+  events only. This is in contrast to `Extreme.Listener` which will read
+  existing events (starting from an arbitrary position) and then keep listening
+  to new events once caught-up.
 
-  It's not uncommon situation to listen live events and propagate them (for example on web sockets).
-  For that situation there is Extreme.FanoutListener macro that hides noise from listener:
+  This is similar in behavior to RabbitMQ's fanout exchange, hence the name.
+
+  It's not uncommon situation to listen live events and propagate them (for
+  example on web sockets). For that situation, use the `Extreme.FanoutListener`
+  macro:
 
       defmodule MyApp.MyFanoutListener do
         use Extreme.FanoutListener
         import MyApp.MyPusher
-      
+
         defp process_push(push) do
           Logger.info "Forward to web socket event #{inspect push.event.event_type}"
           :ok = push.event.data
@@ -20,7 +24,7 @@ defmodule Extreme.FanoutListener do
                  |> process_event(push.event.event_type)
         end
       end
-      
+
       defmodule MyApp.MyPusher do
         def process_event(data, "Elixir.MyApp.Events.PersonCreated") do
           Logger.debug "Transform and push event with data: #{inspect data}"
@@ -29,28 +33,30 @@ defmodule Extreme.FanoutListener do
         def process_event(_, _), do: :ok # Just acknowledge events we are not interested in
       end
 
-  Listener can be started manually but it is most common to place it in supervisor AFTER specifing Extreme:
+  Listener can be started manually but it is most common to place it in a
+  supervision tree _after_ specifying an Extreme client module:
 
       defmodule MyApp.Supervisor do
         use Supervisor
-      
+
         def start_link, do: Supervisor.start_link __MODULE__, :ok
-      
+
         @event_store MyApp.EventStore
-        
+
         def init(:ok) do
           event_store_settings = Application.get_env :my_app, :event_store
       
           children = [
-            supervisr(MyExtreme, [event_store_settings]),
-            worker(MyApp.MyFanoutListener, [MyExtreme, "my_indexed_stream", [name: MyFanoutListener]]),
+            {MyExtreme, [event_store_settings]},
+            {MyApp.MyFanoutListener, [MyExtreme, "my_indexed_stream", [name: MyFanoutListener]]},
             # ... other workers / supervisors
           ]
-          supervise children, strategy: :one_for_one
+
+          Supervisor.init children, strategy: :one_for_one
         end
       end
 
-  Listener can temporary unsubscribe from stream:
+  The listener can temporary unsubscribe from the stream:
 
       :ok = MyApp.MyFanoutListener.unsubscribe(MyFanoutListener)
 
