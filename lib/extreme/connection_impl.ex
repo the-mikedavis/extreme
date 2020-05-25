@@ -1,7 +1,8 @@
 defmodule Extreme.ConnectionImpl do
-  @moduledoc """
-  Set of connection related functions meant to be used from `Extreme.Connection` only!
-  """
+  @moduledoc false
+
+  # Set of connection related functions meant to be used from `Extreme.Connection` only!
+
   alias Extreme.RequestManager
   alias Extreme.Connection.State
 

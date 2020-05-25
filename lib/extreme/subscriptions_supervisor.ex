@@ -2,6 +2,8 @@ defmodule Extreme.SubscriptionsSupervisor do
   use DynamicSupervisor
   alias Extreme.{Subscription, ReadingSubscription, PersistentSubscription}
 
+  @moduledoc false
+
   def _name(base_name),
     do: Module.concat(base_name, SubscriptionsSupervisor)
 

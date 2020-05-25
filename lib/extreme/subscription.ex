@@ -3,6 +3,10 @@ defmodule Extreme.Subscription do
   require Logger
   alias Extreme.SharedSubscription, as: Shared
 
+  @moduledoc """
+  TODO
+  """
+
   defmodule State do
     @moduledoc false
     defstruct ~w(base_name correlation_id subscriber stream read_params status)a

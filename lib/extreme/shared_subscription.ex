@@ -1,7 +1,7 @@
 defmodule Extreme.SharedSubscription do
-  @moduledoc """
-  This module contains functions shared between `Extreme.Subscription` and `Extreme.ReadingSubscription`.
-  """
+  @moduledoc false
+
+  # This module contains functions shared between `Extreme.Subscription` and `Extreme.ReadingSubscription`.
 
   alias Extreme.RequestManager
   alias Extreme.Messages, as: Msg

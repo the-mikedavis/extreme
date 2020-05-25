@@ -1,7 +1,7 @@
 defmodule Extreme.Tools do
-  @moduledoc """
-  Set of tool functions for internal library use.
-  """
+  @moduledoc false
+
+  # Set of tool functions for internal library use.
 
   @doc """
   Cast the provided value to an atom if appropriate.

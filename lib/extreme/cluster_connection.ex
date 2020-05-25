@@ -1,7 +1,7 @@
 defmodule Extreme.ClusterConnection do
-  @moduledoc """
-  Finds node in EventStore cluster that connection should be established with.
-  """
+  @moduledoc false
+
+  # Finds node in EventStore cluster that connection should be established with.
 
   require Logger
 

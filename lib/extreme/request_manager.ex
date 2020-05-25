@@ -2,6 +2,8 @@ defmodule Extreme.RequestManager do
   use GenServer
   alias Extreme.{Tools, Configuration, Request, Response, Connection}
 
+  @moduledoc false
+
   @read_only_message_types [
     Extreme.Messages.ReadEvent,
     Extreme.Messages.ReadStreamEvents,

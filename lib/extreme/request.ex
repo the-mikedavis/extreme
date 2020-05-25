@@ -2,6 +2,8 @@ defmodule Extreme.Request do
   alias Extreme.Tools
   require Logger
 
+  @moduledoc false
+
   def prepare(:heartbeat_response = cmd, correlation_id) do
     res = <<Extreme.MessageResolver.encode_cmd(cmd), 0>> <> correlation_id
     size = byte_size(res)

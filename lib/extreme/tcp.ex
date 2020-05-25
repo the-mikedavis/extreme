@@ -1,7 +1,7 @@
 defmodule Extreme.Tcp do
-  @moduledoc """
-  Set of functions for TCP communication.
-  """
+  @moduledoc false
+
+  # Set of functions for TCP communication.
 
   require Logger
 

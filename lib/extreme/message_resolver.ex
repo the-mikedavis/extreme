@@ -2,6 +2,8 @@ defmodule Extreme.MessageResolver do
   # https://github.com/EventStore/EventStore/blob/master/src/EventStore.ClientAPI/SystemData/TcpCommand.cs
   alias Extreme.Messages, as: Msg
 
+  @moduledoc false
+
   ## Encode
 
   def encode_cmd(:heartbeat_response), do: 0x02

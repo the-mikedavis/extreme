@@ -4,6 +4,8 @@ defmodule Extreme.Connection do
   alias Extreme.ConnectionImpl, as: Impl
   require Logger
 
+  @moduledoc false
+
   defmodule State do
     @moduledoc false
     defstruct ~w(base_name socket received_data)a

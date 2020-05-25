@@ -1,7 +1,7 @@
 defmodule Extreme.Configuration do
-  @moduledoc """
-  Set of functions for retrieving configuration value with correct type
-  """
+  @moduledoc false
+
+  # Set of functions for retrieving configuration value with correct type
 
   alias Extreme.{Tools, ClusterConnection}
 
