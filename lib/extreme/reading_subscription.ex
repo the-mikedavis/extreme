@@ -6,6 +6,9 @@ defmodule Extreme.ReadingSubscription do
   alias Extreme.SharedSubscription, as: Shared
 
   @moduledoc """
+  A subscription strategy which reads prior events before listening to new
+  events
+
   TODO
   """
 
@@ -14,9 +17,7 @@ defmodule Extreme.ReadingSubscription do
     defstruct ~w(base_name correlation_id subscriber read_params buffered_messages read_until status)a
   end
 
-  @doc """
-  Spawns Subscription for read_and_stay_subscribed
-  """
+  @doc false
   def start_link(base_name, correlation_id, subscriber, read_params) do
     GenServer.start_link(
       __MODULE__,

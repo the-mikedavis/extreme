@@ -1,8 +1,11 @@
 defmodule Extreme do
   @moduledoc """
+  An EventStore client library
+
   TODO
   """
 
+  @typedoc false
   @type t :: module
 
   @doc false
@@ -88,7 +91,24 @@ defmodule Extreme do
   end
 
   @doc """
-  TODO
+  Starts an extreme connection
+
+  Typically, extreme connections are started as part of a supervision tree
+
+      def start(_type, _args) do
+        config = Application.fetch_env!(:my_app, MyExtremeClientModule)
+
+        children = [
+          {MyExtremeClientModule, config}
+        ]
+
+        Supervisor.start_link(children, strategy: :one_for_one)
+      end
+
+  But if this is undesirable, connections may be started like so
+
+      iex> config = Application.fetch_env!(:my_app, MyExtremeClientModule)
+      iex> MyExtremeClientModule.start_link(config)
   """
   @callback start_link(config :: Keyword.t(), opts :: Keyword.t()) ::
               {:ok, pid}
@@ -96,23 +116,90 @@ defmodule Extreme do
               | {:error, term}
 
   @doc """
-  TODO
+  Sends a message to the EventStore and synchronously awaits a response
+
+  Communication between the client and the server is done with Protocol
+  Buffers. See `Extreme.Messages` for more information.
+
+  If unspecified, the `correlation_id` defaults to a new UUID and the `timeout`
+  defaults to `5_000` ms (5 seconds).
+
+  ## Examples
+
+      iex> Extreme.Messages.CreatePersistentSubscription.new(
+      ...>   buffer_size: 500,
+      ...>   subscriber_max_count: 1,
+      ...>   prefer_round_robin: true,
+      ...>   event_stream_id: "my_stream_name",
+      ...>   live_buffer_size: 500,
+      ...>   max_retry_count: 10,
+      ...>   message_timeout_milliseconds: 10_000,
+      ...>   read_batch_size: 20,
+      ...>   resolve_link_tos: true,
+      ...>   start_from: 0,
+      ...>   subscription_group_name: "my_subscription_group",
+      ...>   record_statistics: false,
+      ...>   checkpoint_after_time: 1_000,
+      ...>   checkpoint_max_count: 500,
+      ...>   checkpoint_min_count: 1
+      ...> ) |> MyExtremeClient.execute()
+      {:ok, %Extreme.Messages.CreatePersistentSubscriptionCompleted{result: :success, reason: ""}}
   """
-  @callback execute(message :: term(), correlation_id :: binary(), timeout :: integer()) :: term()
+  @callback execute(message :: struct(), correlation_id :: binary(), timeout :: integer()) ::
+              term()
 
   @doc """
-  TODO
+  Spawns a generic subscription
+
+  See `Extreme.Subscription` for more information.
+
+  ## Examples
+
+      iex> MyExtremeClientModule.subscribe_to("my_stream_of_events", self(), true, 5_000)
+      {:ok, #PID<1.2.3>}
   """
-  @callback subscribe_to(stream :: String.t(), subscriber :: pid(), opts :: Keyword.t()) ::
-              {:ok, pid}
+  @callback subscribe_to(
+              stream :: String.t(),
+              subscriber :: pid(),
+              resolve_link_tos :: boolean(),
+              ack_timeout :: integer()
+            ) :: {:ok, pid}
 
   @doc """
-  TODO
+  Unsubscribes and terminates a subscription process
+
+  ## Examples
+
+      iex> {:ok, subscription_pid} =
+      ...>   MyExtremeClientModule.connect_to_persistent_subscription(
+      ...>     self(),
+      ...>     "my_stream_of_events",
+      ...>     "my_subscription_group",
+      ...>     1
+      ...>   )
+      {:ok, #PID<1.2.3>}
+      iex> MyExtremeClientModule.unsubscribe(subscription_pid)
+      :unsubscribed
+
   """
   @callback unsubscribe(subscription :: pid()) :: :unsubscribed
 
   @doc """
-  TODO
+  Spawns a reading-style subscription
+
+  See `Extreme.ReadingSubscription` for full details.
+
+  ## Examples
+
+      iex> MyExtremeClientModule.read_and_stay_subscribed(
+      ...>   "my_stream_of_events",
+      ...>   self(),
+      ...>   0,
+      ...>   100,
+      ...>   true,
+      ...>   false
+      ...> )
+      {:ok, #PID<1.2.3>}
   """
   @callback read_and_stay_subscribed(
               stream :: String.t(),
@@ -124,18 +211,36 @@ defmodule Extreme do
             ) :: {:ok, pid()}
 
   @doc """
-  Pings connected EventStore and should return `:pong` back.
+  Pings the connected EventStore and should return `:pong` back
+
+  This function provides a simple sanity-check to determine if a client
+  module is currently connected to an EventStore.
+
+  ## Examples
+
+      iex> MyExtremeClientModule.ping
+      :pong
   """
   @callback ping() :: :pong
 
   @doc """
-  Spawns a persistent subscription.
+  Spawns a persistent subscription
 
   The persistent subscription will send events to the `subscriber` process in
   the form of `GenServer.cast/2`s in the shape of `{:on_event, event,
   correlation_id}`.
 
   See `Extreme.PersistentSubscription` for full details.
+
+  ## Examples
+
+      iex> MyExtremeClientModule.connect_to_persistent_subscription(
+      ...>   self(),
+      ...>   "my_stream_of_events",
+      ...>   "my_subscription_group",
+      ...>   1
+      ...> )
+      {:ok, #PID<1.2.3>}
   """
   @callback connect_to_persistent_subscription(
               subscriber :: pid(),

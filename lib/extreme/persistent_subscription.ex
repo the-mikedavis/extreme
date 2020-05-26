@@ -1,6 +1,6 @@
 defmodule Extreme.PersistentSubscription do
   @moduledoc """
-  An asynchronous subscription strategy.
+  An asynchronous subscription strategy
 
   Other subscription methods require stream positions to be persisted by the
   client (e.g. in `:dets` or PostgreSQL). Persistent Subscription is a

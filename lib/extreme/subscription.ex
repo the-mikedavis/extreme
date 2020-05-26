@@ -4,6 +4,8 @@ defmodule Extreme.Subscription do
   alias Extreme.SharedSubscription, as: Shared
 
   @moduledoc """
+  A generic subscription which processes new events as they arrive
+
   TODO
   """
 
