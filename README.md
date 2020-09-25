@@ -235,12 +235,13 @@ you can check `test/extreme_test.exs` file.
 
 ### Subscriptions
 
-`Extreme.subscribe_to/3` function is used to get notified on new events on particular stream.
-This way subscriber, in next example `self`, will get message `{:on_event, push_message}` when new event is added to stream
-_people_.
+`Extreme.subscribe_to/4` function is used to get notified on new events on
+particular stream. In the following example, if the module is a GenServer, it
+will receive `{:on_event, push_message}` when a new event is added to the end
+of the _people_ stream.
 
 ```elixir
-def subscribe(server, stream \\ "people"), do: Extreme.subscribe_to(server, self, stream)
+def subscribe(server, stream \\ "people"), do: MyExtremeClient.subscribe_to(stream, self())
 
 def handle_info({:on_event, event}, state) do
   Logger.debug "New event added to stream 'people': #{inspect event}"
